@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { triviaTokenRequest } from '../services/apiTrivia';
+import { addPlayerInfos, addToken } from '../redux/actions/index';
 
 export class Login extends Component {
   state = {
-    playerName: '',
-    playerEmail: '',
+    name: '',
+    gravatarEmail: '',
     btnDisabled: true,
   }
 
@@ -13,16 +17,22 @@ export class Login extends Component {
     this.setState({
       [name]: value,
     });
-    const { playerName, playerEmail } = this.state;
-    if (playerName.length > 0 && playerEmail.length > 0) {
+    const { gravatarEmail } = this.state;
+    if (name.length > 0 && gravatarEmail.length > 0) {
       this.setState({
         btnDisabled: false,
       });
     }
   }
 
+  getToken = async () => {
+    const token = await triviaTokenRequest();
+    return token;
+  };
+
   render() {
-    const { playerName, playerEmail, btnDisabled } = this.state;
+    const { name, gravatarEmail, btnDisabled } = this.state;
+    const { addPlayerToGlobalState, addTokenToGlobalState } = this.props;
     return (
       <main>
         <form>
@@ -30,8 +40,8 @@ export class Login extends Component {
             Nome:
             <input
               onChange={ this.handleChange }
-              value={ playerName }
-              name="playerName"
+              value={ name }
+              name="name"
               type="text"
               id="input-player-name"
               data-testid="input-player-name"
@@ -41,26 +51,41 @@ export class Login extends Component {
             Email:
             <input
               onChange={ this.handleChange }
-              value={ playerEmail }
-              name="playerEmail"
+              value={ gravatarEmail }
+              name="gravatarEmail"
               type="email"
               id="input-gravatar-email"
               data-testid="input-gravatar-email"
             />
           </label>
-          <button
-            disabled={ btnDisabled }
-            data-testid="btn-play"
-            type="submit"
-          >
-            Play
-          </button>
+          <Link to="/questions">
+            <button
+              disabled={ btnDisabled }
+              data-testid="btn-play"
+              type="submit"
+              onClick={ () => {
+                addPlayerToGlobalState(this.state);
+                addTokenToGlobalState(this.state);
+                console.log(this.getToken());
+              } }
+            >
+              Play
+            </button>
+          </Link>
         </form>
       </main>
     );
   }
 }
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = (dispatch) => ({
+  addPlayerToGlobalState: (state) => dispatch(addPlayerInfos(state)),
+  addTokenToGlobalState: (state) => dispatch(addToken(state)),
+});
+
+Login.propTypes = {
+  addPlayerToGlobalState: PropTypes.func.isRequired,
+  addTokenToGlobalState: PropTypes.func.isRequired,
+};
 
 export default connect(null, mapDispatchToProps)(Login);
