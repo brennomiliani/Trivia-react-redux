@@ -1,13 +1,11 @@
 import { ADD_TOKEN } from '../actions/actionTypes';
 
-const initialState = {
-  token: '',
-};
+const initialState = {};
 
 const token = (state = initialState, { type, payload }) => {
   switch (type) {
   case ADD_TOKEN:
-    return { ...state, token: payload };
+    return payload.token;
 
   default:
     return state;

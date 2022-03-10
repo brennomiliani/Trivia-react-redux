@@ -13,16 +13,17 @@ export class Login extends Component {
     btnDisabled: true,
   }
 
-  handleSubmit = async () => {
+  handleSubmit = async (event) => {
+    event.preventDefault();
     const { addPlayerToGlobalState, addTokenToGlobalState, history } = this.props;
     const newToken = await this.getToken();
     const { name, gravatarEmail } = this.state;
     const player = { name, gravatarEmail };
     addPlayerToGlobalState(player);
-    addTokenToGlobalState(newToken.token);
+    addTokenToGlobalState(newToken);
     console.log(newToken.token);
 
-    setTokenOnStorage('token', newToken.token);
+    setTokenOnStorage('token', newToken);
 
     history.push('/game');
   }
@@ -30,8 +31,8 @@ export class Login extends Component {
   handleChange = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value }, () => {
-      const { gravatarEmail } = this.state;
-      if (name.length > 0 && gravatarEmail.length > 0) {
+      const { name: nameState, gravatarEmail } = this.state;
+      if (nameState.length > 0 && gravatarEmail.length > 0) {
         this.setState({
           btnDisabled: false,
         });
@@ -71,16 +72,14 @@ export class Login extends Component {
               data-testid="input-gravatar-email"
             />
           </label>
-          <Link to="/questions">
-            <button
-              disabled={ btnDisabled }
-              data-testid="btn-play"
-              type="submit"
-              onClick={ this.handleSubmit }
-            >
-              Play
-            </button>
-          </Link>
+          <button
+            disabled={ btnDisabled }
+            data-testid="btn-play"
+            type="submit"
+            onClick={ this.handleSubmit }
+          >
+            Play
+          </button>
         </form>
       </main>
     );
