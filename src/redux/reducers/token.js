@@ -7,7 +7,7 @@ const initialState = {
 const token = (state = initialState, { type, payload }) => {
   switch (type) {
   case ADD_TOKEN:
-    return { ...state, ...payload };
+    return { ...state, token: payload };
 
   default:
     return state;

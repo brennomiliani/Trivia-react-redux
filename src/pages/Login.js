@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { triviaTokenRequest } from '../services/apiTrivia';
 import { addPlayerInfos, addToken } from '../redux/actions/index';
+import { setTokenOnStorage } from '../services/getSetLocalStorage';
 
 export class Login extends Component {
   state = {
@@ -12,17 +13,30 @@ export class Login extends Component {
     btnDisabled: true,
   }
 
+  handleSubmit = async () => {
+    const { addPlayerToGlobalState, addTokenToGlobalState, history } = this.props;
+    const newToken = await this.getToken();
+    const { name, gravatarEmail } = this.state;
+    const player = { name, gravatarEmail };
+    addPlayerToGlobalState(player);
+    addTokenToGlobalState(newToken.token);
+    console.log(newToken.token);
+
+    setTokenOnStorage('token', newToken.token);
+
+    history.push('/game');
+  }
+
   handleChange = ({ target }) => {
     const { name, value } = target;
-    this.setState({
-      [name]: value,
+    this.setState({ [name]: value }, () => {
+      const { gravatarEmail } = this.state;
+      if (name.length > 0 && gravatarEmail.length > 0) {
+        this.setState({
+          btnDisabled: false,
+        });
+      }
     });
-    const { gravatarEmail } = this.state;
-    if (name.length > 0 && gravatarEmail.length > 0) {
-      this.setState({
-        btnDisabled: false,
-      });
-    }
   }
 
   getToken = async () => {
@@ -32,7 +46,6 @@ export class Login extends Component {
 
   render() {
     const { name, gravatarEmail, btnDisabled } = this.state;
-    const { addPlayerToGlobalState, addTokenToGlobalState } = this.props;
     return (
       <main>
         <form>
@@ -63,11 +76,7 @@ export class Login extends Component {
               disabled={ btnDisabled }
               data-testid="btn-play"
               type="submit"
-              onClick={ () => {
-                addPlayerToGlobalState(this.state);
-                addTokenToGlobalState(this.state);
-                console.log(this.getToken());
-              } }
+              onClick={ this.handleSubmit }
             >
               Play
             </button>
@@ -86,6 +95,9 @@ const mapDispatchToProps = (dispatch) => ({
 Login.propTypes = {
   addPlayerToGlobalState: PropTypes.func.isRequired,
   addTokenToGlobalState: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
 };
 
 export default connect(null, mapDispatchToProps)(Login);
