@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { triviaTokenRequest } from '../services/apiTrivia';
 import { addPlayerInfos, addToken } from '../redux/actions/index';
@@ -21,7 +20,6 @@ export class Login extends Component {
     const player = { name, gravatarEmail };
     addPlayerToGlobalState(player);
     addTokenToGlobalState(newToken);
-    console.log(newToken.token);
 
     setTokenOnStorage('token', newToken.token);
 
