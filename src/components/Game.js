@@ -1,20 +1,21 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getTokenFromStorage, setTokenOnStorage } from '../services/getSetLocalStorage';
+import { setTokenOnStorage } from '../services/getSetLocalStorage';
 import { triviaQuestionsRequest, triviaTokenRequest } from '../services/apiTrivia';
+import { addToken } from '../redux/actions';
 
 export class Game extends Component {
   state = {
-    token: '',
     questions: [],
     activeQuestion: 0,
+    isLoading: true,
   }
 
   componentDidMount = async () => {
-    // caso a request for bem sucedida
-    const token = getTokenFromStorage();
-    const { results, response_code: { code } } = await triviaQuestionsRequest(token);
-    this.setState({ questions: results, token });
+    const { reduxToken, dispatchToken } = this.props;
+    const result = await triviaQuestionsRequest(reduxToken);
+    const { results, response_code: code } = result;
 
     // caso erro na request
     const ERROR_CODE = 3;
@@ -22,11 +23,21 @@ export class Game extends Component {
       const newTokenRequest = await triviaTokenRequest();
       const newQuestions = await triviaQuestionsRequest(newTokenRequest.token);
       setTokenOnStorage('token', newTokenRequest.token);
-      this.setState({ questions: newQuestions, token: newTokenRequest.token });
+      dispatchToken(newTokenRequest);
+      this.setState(
+        {
+          questions: newQuestions.results,
+          isLoading: false,
+        },
+      );
+    } else {
+      // caso a request for bem sucedida
+      this.setState({ questions: results, isLoading: false });
     }
   }
 
   randomizeAnswers = (question) => {
+    console.log(question);
     const { correct_answer: correct, incorrect_answers: incorrects } = question;
 
     // inserindo respostas incorretas no array
@@ -38,7 +49,15 @@ export class Game extends Component {
     });
 
     // inserindo a resposta correta no array
-    answerArr.push(<button type="button" data-testid="answer-options">{correct}</button>);
+    answerArr.push(
+      <button
+        type="button"
+        key="correct"
+        data-testid="correct-answer"
+      >
+        {correct}
+      </button>,
+    );
 
     // randomizando respostas do array
     this.shuffle(answerArr);
@@ -47,12 +66,15 @@ export class Game extends Component {
   }
 
   createQuestion = (question) => {
+    console.log(question);
     const answers = this.randomizeAnswers(question);
     return (
       <div className="question-container">
         <p data-testid="question-category">{question.category}</p>
         <p data-testid="question-text">{question.question}</p>
-        {answers}
+        <div data-testid="answer-options">
+          {answers}
+        </div>
       </div>
     );
   }
@@ -77,17 +99,27 @@ export class Game extends Component {
   }
 
   render() {
-    const { token, questions, activeQuestion } = this.state;
+    const { isLoading, questions, activeQuestion } = this.state;
+    console.log(questions);
     return (
       <main>
-        {token && this.createQuestion(questions[activeQuestion])}
+        {!isLoading && this.createQuestion(questions[activeQuestion])}
       </main>
     );
   }
 }
 
-const mapStateToProps = () => ({});
+Game.propTypes = {
+  dispatchToken: PropTypes.func.isRequired,
+  reduxToken: PropTypes.string.isRequired,
+};
 
-const mapDispatchToProps = {};
+const mapStateToProps = (state) => ({
+  reduxToken: state.token,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatchToken: (token) => dispatch(addToken(token)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
