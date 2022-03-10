@@ -45,6 +45,7 @@ export class Login extends Component {
 
   render() {
     const { name, gravatarEmail, btnDisabled } = this.state;
+    const { history } = this.props;
     return (
       <main>
         <form>
@@ -77,6 +78,14 @@ export class Login extends Component {
             onClick={ this.handleSubmit }
           >
             Play
+          </button>
+
+          <button
+            type="button"
+            data-testid="btn-settings"
+            onClick={ () => history.push('/settings') }
+          >
+            Settings
           </button>
         </form>
       </main>
