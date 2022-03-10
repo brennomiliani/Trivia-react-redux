@@ -2,7 +2,7 @@ import { ADD_PLAYER_INFOS } from '../actions/actionTypes';
 
 const initialState = {
   name: '',
-  assertions: '',
+  assertions: 0,
   score: 0,
   gravatarEmail: '',
 };
