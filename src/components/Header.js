@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import playerImgRequest from '../services/apiGravatar';
 
-class Header extends Component {
+export class Header extends Component {
   render() {
-    const { playerName, playerEmail } = this.props;
+    const { playerName, playerEmail, playerScore } = this.props;
 
     return (
       <header>
@@ -19,7 +19,7 @@ class Header extends Component {
         </p>
         Pontos:
         <p data-testid="header-score">
-          0
+          {playerScore}
         </p>
       </header>
     );
@@ -29,11 +29,13 @@ class Header extends Component {
 Header.propTypes = {
   playerEmail: PropTypes.string.isRequired,
   playerName: PropTypes.string.isRequired,
+  playerScore: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   playerName: state.player.name,
   playerEmail: state.player.gravatarEmail,
+  playerScore: state.player.score,
 });
 
 export default connect(mapStateToProps, null)(Header);

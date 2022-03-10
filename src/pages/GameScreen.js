@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Game from '../components/Game';
 import Header from '../components/Header';
 
 export class GameScreen extends Component {
@@ -6,6 +7,7 @@ export class GameScreen extends Component {
     return (
       <div>
         <Header />
+        <Game />
       </div>
     );
   }
