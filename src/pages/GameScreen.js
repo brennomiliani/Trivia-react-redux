@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Header from '../components/Header';
 
 export class GameScreen extends Component {
@@ -12,8 +11,4 @@ export class GameScreen extends Component {
   }
 }
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);
+export default GameScreen;
