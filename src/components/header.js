@@ -17,7 +17,7 @@ class Header extends Component {
         <p data-testid="header-player-name">
           { playerName }
         </p>
-        Placar:
+        Pontos:
         <p data-testid="header-score">
           0
         </p>
