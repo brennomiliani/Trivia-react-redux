@@ -3,22 +3,32 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import playerImgRequest from '../services/apiGravatar';
 
-class header extends Component {
-  componentDidMount() {
-    getImg = async () => {
-      const { playerEmail } = this.props;
-      const urlImg = await playerImgRequest(playerEmail);
-      return urlImg;
-    };
+class Header extends Component {
+  state = {
+    imgUrl: '',
+  };
+
+  getImg = async () => {
+    const { playerEmail } = this.props;
+    const urlImg = await playerImgRequest(playerEmail);
+    return urlImg;
+  };
+
+  componentDidMount = async () => {
+    const imgUrl = await this.getImg();
+    this.setState({ imgUrl }, () => {
+      console.log(imgUrl);
+    });
   }
 
   render() {
+    const { imgUrl } = this.state;
     const { playerName } = this.props;
     return (
       <header>
         <img
           data-testid="header-profile-picture"
-          src={ this.getImg() }
+          src={ `https://www.gravatar.com/avatar/${imgUrl}` }
           alt={ playerName }
         />
         Nome:
@@ -33,13 +43,14 @@ class header extends Component {
     );
   }
 }
+
+Header.propTypes = {
+  playerEmail: PropTypes.string.isRequired,
+  playerName: PropTypes.string.isRequired,
+};
 const mapStateToProps = (state) => ({
-  playerName: state.player.playerName,
-  playerEmail: state.player.playerEmail,
+  playerName: state.player.name,
+  playerEmail: state.player.gravatarEmail,
 });
 
-header.propTypes = {
-  playerName: PropTypes.string.isRequired,
-  playerEmail: PropTypes.string.isRequired,
-};
-export default connect(mapStateToProps, null)(header);
+export default connect(mapStateToProps, null)(Header);

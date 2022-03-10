@@ -23,7 +23,7 @@ export class Login extends Component {
     addTokenToGlobalState(newToken);
     console.log(newToken.token);
 
-    setTokenOnStorage('token', newToken);
+    setTokenOnStorage('token', newToken.token);
 
     history.push('/game');
   }
