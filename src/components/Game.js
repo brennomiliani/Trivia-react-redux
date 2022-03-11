@@ -105,10 +105,14 @@ export class Game extends Component {
 
   nextQuestion = () => {
     const { questions, activeQuestion } = this.state;
+    const { history } = this.props;
     const MAX_QUESTIONS = 4;
     if (activeQuestion < MAX_QUESTIONS) {
       this.setState({ activeQuestion: activeQuestion + 1 });
       this.createQuestion(questions[activeQuestion]);
+    }
+    if (activeQuestion === MAX_QUESTIONS) {
+      history.push('/feedback');
     }
   }
 
@@ -151,6 +155,9 @@ export class Game extends Component {
 Game.propTypes = {
   dispatchToken: PropTypes.func.isRequired,
   reduxToken: PropTypes.string.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => ({
