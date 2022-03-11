@@ -89,11 +89,15 @@ export class Game extends Component {
   handleClick = (event) => {
     const { questions, activeQuestion } = this.state;
     const correctAnswer = questions[activeQuestion].correct_answer;
-    if (event.target.innerHTML === correctAnswer) {
-      event.target.style.border = '3px solid rgb(6, 240, 15)';
-    } else {
-      event.target.style.border = '3px solid rgb(255, 0, 0)';
-    }
+    const parent = event.target.parentNode;
+
+    parent.childNodes.forEach((answer) => {
+      if (answer.innerHTML === correctAnswer) {
+        answer.style.border = '3px solid rgb(6, 240, 15)';
+      } else {
+        answer.style.border = '3px solid rgb(255, 0, 0)';
+      }
+    });
   }
 
   // Ref: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array?page=1&tab=scoredesc#tab-top
