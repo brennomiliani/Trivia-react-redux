@@ -37,20 +37,28 @@ export class Game extends Component {
   }
 
   randomizeAnswers = (question) => {
-    console.log(question);
     const { correct_answer: correct, incorrect_answers: incorrects } = question;
 
     // inserindo respostas incorretas no array
     const answerArr = incorrects.map((answer, index) => {
       const dataTestId = `wrong-answer-${index}`;
       return (
-        <button type="button" key={ index } data-testid={ dataTestId }>{answer}</button>
+        <button
+          onClick={ this.handleClick }
+          type="button"
+          key={ index }
+          data-testid={ dataTestId }
+        >
+          {answer}
+
+        </button>
       );
     });
 
     // inserindo a resposta correta no array
     answerArr.push(
       <button
+        onClick={ this.handleClick }
         type="button"
         key="correct"
         data-testid="correct-answer"
@@ -66,7 +74,6 @@ export class Game extends Component {
   }
 
   createQuestion = (question) => {
-    console.log(question);
     const answers = this.randomizeAnswers(question);
     return (
       <div className="question-container">
@@ -77,6 +84,16 @@ export class Game extends Component {
         </div>
       </div>
     );
+  }
+
+  handleClick = (event) => {
+    const { questions, activeQuestion } = this.state;
+    const correctAnswer = questions[activeQuestion].correct_answer;
+    if (event.target.innerHTML === correctAnswer) {
+      event.target.style.border = '3px solid rgb(6, 240, 15)';
+    } else {
+      event.target.style.border = '3px solid rgb(255, 0, 0)';
+    }
   }
 
   // Ref: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array?page=1&tab=scoredesc#tab-top
@@ -100,10 +117,16 @@ export class Game extends Component {
 
   render() {
     const { isLoading, questions, activeQuestion } = this.state;
-    console.log(questions);
     return (
       <main>
         {!isLoading && this.createQuestion(questions[activeQuestion])}
+        <button
+          type="button"
+          onClick={ () => this.setState({ activeQuestion: activeQuestion + 1 }) }
+        >
+          Proxima pergunta
+
+        </button>
       </main>
     );
   }
