@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { setTokenOnStorage } from '../services/getSetLocalStorage';
 import { triviaQuestionsRequest, triviaTokenRequest } from '../services/apiTrivia';
 import { addToken } from '../redux/actions';
+import './styles/Game.css';
 
 export class Game extends Component {
   state = {
@@ -44,6 +45,7 @@ export class Game extends Component {
       const dataTestId = `wrong-answer-${index}`;
       return (
         <button
+          className="default-answer"
           onClick={ this.handleClick }
           type="button"
           key={ index }
@@ -58,6 +60,7 @@ export class Game extends Component {
     // inserindo a resposta correta no array
     answerArr.push(
       <button
+        className=""
         onClick={ this.handleClick }
         type="button"
         key="correct"
@@ -76,7 +79,7 @@ export class Game extends Component {
   createQuestion = (question) => {
     const answers = this.randomizeAnswers(question);
     return (
-      <div className="question-container">
+      <div className="">
         <p data-testid="question-category">{question.category}</p>
         <p data-testid="question-text">{question.question}</p>
         <div data-testid="answer-options">
@@ -93,11 +96,20 @@ export class Game extends Component {
 
     parent.childNodes.forEach((answer) => {
       if (answer.innerHTML === correctAnswer) {
-        answer.style.border = '3px solid rgb(6, 240, 15)';
+        answer.className = 'correct-answer';
       } else {
-        answer.style.border = '3px solid rgb(255, 0, 0)';
+        answer.className = 'incorrect-answer';
       }
     });
+  }
+
+  nextQuestion = () => {
+    const { questions, activeQuestion } = this.state;
+    const MAX_QUESTIONS = 4;
+    if (activeQuestion < MAX_QUESTIONS) {
+      this.setState({ activeQuestion: activeQuestion + 1 });
+      this.createQuestion(questions[activeQuestion]);
+    }
   }
 
   // Ref: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array?page=1&tab=scoredesc#tab-top
@@ -126,7 +138,7 @@ export class Game extends Component {
         {!isLoading && this.createQuestion(questions[activeQuestion])}
         <button
           type="button"
-          onClick={ () => this.setState({ activeQuestion: activeQuestion + 1 }) }
+          onClick={ this.nextQuestion }
         >
           Proxima pergunta
 
