@@ -141,6 +141,7 @@ export class Game extends Component {
       <main>
         {!isLoading && this.createQuestion(questions[activeQuestion])}
         <button
+          data-testid="btn-next"
           type="button"
           onClick={ this.nextQuestion }
         >
