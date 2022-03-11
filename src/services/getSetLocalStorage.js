@@ -6,3 +6,8 @@ export const getTokenFromStorage = () => {
 export const setTokenOnStorage = (name, value) => {
   localStorage.setItem(name, value);
 };
+
+export const getPlayerFromStorage = () => {
+  const result = localStorage.getItem('ranking');
+  return JSON.parse(result);
+};
