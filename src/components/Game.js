@@ -104,12 +104,16 @@ export class Game extends Component {
   }
 
   nextQuestion = () => {
-    const { questions, activeQuestion } = this.state;
+    const { activeQuestion } = this.state;
     const { history } = this.props;
     const MAX_QUESTIONS = 4;
     if (activeQuestion < MAX_QUESTIONS) {
-      this.setState({ activeQuestion: activeQuestion + 1 });
-      this.createQuestion(questions[activeQuestion]);
+      const correctButton = document.querySelector('.correct-answer');
+      const incorrectButtons = document.querySelectorAll('.incorrect-answer');
+      const answerButtons = [...incorrectButtons, correctButton];
+      this.setState({ activeQuestion: activeQuestion + 1 }, () => {
+        answerButtons.forEach((answer) => { answer.className = 'default-answer'; });
+      });
     }
     if (activeQuestion === MAX_QUESTIONS) {
       history.push('/feedback');
@@ -141,7 +145,6 @@ export class Game extends Component {
       <main>
         {!isLoading && this.createQuestion(questions[activeQuestion])}
         <button
-          data-testid="btn-next"
           type="button"
           onClick={ this.nextQuestion }
         >
