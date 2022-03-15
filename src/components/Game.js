@@ -195,6 +195,7 @@ export class Game extends Component {
 }
 
 Game.propTypes = {
+  addPlayerPoints: PropTypes.func.isRequired,
   answerIsDisabled: PropTypes.bool.isRequired,
   dispatchSeconds: PropTypes.func.isRequired,
   dispatchToken: PropTypes.func.isRequired,

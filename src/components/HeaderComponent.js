@@ -6,7 +6,7 @@ import playerImgRequest from '../services/apiGravatar';
 export class Header extends Component {
   render() {
     const { playerName, playerEmail, playerScore } = this.props;
-
+    console.log(playerName, playerEmail, playerScore);
     return (
       <header>
         <img

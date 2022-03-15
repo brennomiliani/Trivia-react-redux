@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Header } from '../components/Header';
+// import { Header } from '../components/Header';
+import HeaderComponent from '../components/HeaderComponent';
 
 class Feedback extends Component {
   render() {
@@ -9,7 +10,7 @@ class Feedback extends Component {
     const assertionsNum = 3;
     return (
       <>
-        <Header />
+        <HeaderComponent />
         <h3 data-testid="feedback-text">
           { assertions >= assertionsNum
             ? 'Well Done!'
