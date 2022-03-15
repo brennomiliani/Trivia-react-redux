@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { setTokenOnStorage } from '../services/getSetLocalStorage';
 import { triviaQuestionsRequest, triviaTokenRequest } from '../services/apiTrivia';
-import { addToken } from '../redux/actions';
+import { addToken, buttonDisabled, addTimer } from '../redux/actions';
 import './styles/Game.css';
 
 export class Game extends Component {
@@ -11,6 +11,7 @@ export class Game extends Component {
     questions: [],
     activeQuestion: 0,
     isLoading: true,
+    wasAnswered: false,
   }
 
   componentDidMount = async () => {
@@ -39,12 +40,13 @@ export class Game extends Component {
 
   randomizeAnswers = (question) => {
     const { correct_answer: correct, incorrect_answers: incorrects } = question;
-
+    const { answerIsDisabled } = this.props;
     // inserindo respostas incorretas no array
     const answerArr = incorrects.map((answer, index) => {
       const dataTestId = `wrong-answer-${index}`;
       return (
         <button
+          disabled={ answerIsDisabled }
           className="default-answer"
           onClick={ this.handleClick }
           type="button"
@@ -60,6 +62,7 @@ export class Game extends Component {
     // inserindo a resposta correta no array
     answerArr.push(
       <button
+        disabled={ answerIsDisabled }
         className=""
         onClick={ this.handleClick }
         type="button"
@@ -93,6 +96,7 @@ export class Game extends Component {
     const { questions, activeQuestion } = this.state;
     const correctAnswer = questions[activeQuestion].correct_answer;
     const parent = event.target.parentNode;
+    this.setState({ wasAnswered: true });
 
     parent.childNodes.forEach((answer) => {
       if (answer.innerHTML === correctAnswer) {
@@ -104,12 +108,20 @@ export class Game extends Component {
   }
 
   nextQuestion = () => {
-    const { questions, activeQuestion } = this.state;
-    const { history } = this.props;
+    const { activeQuestion, wasAnswered } = this.state;
+    const { history, isAnswersDisabled, dispatchSeconds } = this.props;
     const MAX_QUESTIONS = 4;
+    if (wasAnswered) {
+      const correctButton = document.querySelector('.correct-answer');
+      const incorrectButtons = document.querySelectorAll('.incorrect-answer');
+      const answerButtons = [...incorrectButtons, correctButton];
+      answerButtons.forEach((answer) => { answer.className = 'default-answer'; });
+    }
     if (activeQuestion < MAX_QUESTIONS) {
-      this.setState({ activeQuestion: activeQuestion + 1 });
-      this.createQuestion(questions[activeQuestion]);
+      const SECONDS_PER_QUESTION = 30;
+      isAnswersDisabled(false);
+      dispatchSeconds(SECONDS_PER_QUESTION);
+      this.setState({ activeQuestion: activeQuestion + 1, wasAnswered: false });
     }
     if (activeQuestion === MAX_QUESTIONS) {
       history.push('/feedback');
@@ -136,36 +148,50 @@ export class Game extends Component {
   }
 
   render() {
-    const { isLoading, questions, activeQuestion } = this.state;
+    const { isLoading, questions, activeQuestion, wasAnswered } = this.state;
+    const { timer } = this.props;
+
+    const nextQuestion = (
+      <button
+        type="button"
+        data-testid="btn-next"
+        onClick={ this.nextQuestion }
+      >
+        Proxima pergunta
+      </button>
+    );
     return (
       <main>
         {!isLoading && this.createQuestion(questions[activeQuestion])}
-        <button
-          type="button"
-          onClick={ this.nextQuestion }
-        >
-          Proxima pergunta
+        { timer === 0 || wasAnswered ? nextQuestion : <p>Responda a pergunta</p>}
 
-        </button>
       </main>
     );
   }
 }
 
 Game.propTypes = {
+  answerIsDisabled: PropTypes.bool.isRequired,
+  dispatchSeconds: PropTypes.func.isRequired,
   dispatchToken: PropTypes.func.isRequired,
-  reduxToken: PropTypes.string.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  isAnswersDisabled: PropTypes.func.isRequired,
+  reduxToken: PropTypes.string.isRequired,
+  timer: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   reduxToken: state.token,
+  timer: state.timer.finalSeconds,
+  answerIsDisabled: state.timer.answersAreDisabled,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   dispatchToken: (token) => dispatch(addToken(token)),
+  dispatchSeconds: (seconds) => dispatch(addTimer(seconds)),
+  isAnswersDisabled: (isBtnDisabled) => dispatch(buttonDisabled(isBtnDisabled)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
