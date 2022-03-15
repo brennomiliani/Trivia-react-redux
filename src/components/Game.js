@@ -94,10 +94,11 @@ export class Game extends Component {
 
   handleClick = (event) => {
     const { questions, activeQuestion } = this.state;
+    const { isAnswersDisabled, timer } = this.props;
     const correctAnswer = questions[activeQuestion].correct_answer;
     const parent = event.target.parentNode;
     this.setState({ wasAnswered: true });
-
+    isAnswersDisabled(true);
     parent.childNodes.forEach((answer) => {
       if (answer.innerHTML === correctAnswer) {
         answer.className = 'correct-answer';
@@ -105,27 +106,41 @@ export class Game extends Component {
         answer.className = 'incorrect-answer';
       }
     });
+    if (event.target.className === 'correct-answer') {
+      const SCORE_BASE = 10;
+      const { difficulty } = questions[activeQuestion];
+      if (difficulty === 'hard') {
+        const difficultyPoints = 3;
+      } if (difficulty === 'medium') {
+        const difficultyPoints = 2;
+      } if (difficulty === 'easy') {
+        const difficultyPoints = 1;
+      }
+      const playerScore = SCORE_BASE + (timer * difficultyPoints);
+    }
   }
 
-  nextQuestion = () => {
-    const { activeQuestion, wasAnswered } = this.state;
-    const { history, isAnswersDisabled, dispatchSeconds } = this.props;
-    const MAX_QUESTIONS = 4;
-    if (wasAnswered) {
-      const correctButton = document.querySelector('.correct-answer');
-      const incorrectButtons = document.querySelectorAll('.incorrect-answer');
-      const answerButtons = [...incorrectButtons, correctButton];
-      answerButtons.forEach((answer) => { answer.className = 'default-answer'; });
-    }
-    if (activeQuestion < MAX_QUESTIONS) {
-      const SECONDS_PER_QUESTION = 30;
-      isAnswersDisabled(false);
-      dispatchSeconds(SECONDS_PER_QUESTION);
-      this.setState({ activeQuestion: activeQuestion + 1, wasAnswered: false });
-    }
-    if (activeQuestion === MAX_QUESTIONS) {
-      history.push('/feedback');
-    }
+
+    nextQuestion = () => {
+      const { activeQuestion, wasAnswered } = this.state;
+      const { history, isAnswersDisabled, dispatchSeconds } = this.props;
+      const MAX_QUESTIONS = 4;
+      if (wasAnswered) {
+        const correctButton = document.querySelector('.correct-answer');
+        const incorrectButtons = document.querySelectorAll('.incorrect-answer');
+        const answerButtons = [...incorrectButtons, correctButton];
+        answerButtons.forEach((answer) => { answer.className = 'default-answer'; });
+      }
+      if (activeQuestion < MAX_QUESTIONS) {
+        const SECONDS_PER_QUESTION = 30;
+        isAnswersDisabled(false);
+        dispatchSeconds(SECONDS_PER_QUESTION);
+        this.setState({ activeQuestion: activeQuestion + 1, wasAnswered: false });
+      }
+      if (activeQuestion === MAX_QUESTIONS) {
+        history.push('/feedback');
+      }
+    };
   }
 
   // Ref: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array?page=1&tab=scoredesc#tab-top
@@ -164,7 +179,6 @@ export class Game extends Component {
       <main>
         {!isLoading && this.createQuestion(questions[activeQuestion])}
         { timer === 0 || wasAnswered ? nextQuestion : <p>Responda a pergunta</p>}
-
       </main>
     );
   }
