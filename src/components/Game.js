@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { setTokenOnStorage } from '../services/getSetLocalStorage';
 import { triviaQuestionsRequest, triviaTokenRequest } from '../services/apiTrivia';
-import { addToken, buttonDisabled, addTimer } from '../redux/actions';
+import { addToken, buttonDisabled, addTimer, addPlayerInfos } from '../redux/actions';
 import './styles/Game.css';
 
 export class Game extends Component {
@@ -12,6 +12,8 @@ export class Game extends Component {
     activeQuestion: 0,
     isLoading: true,
     wasAnswered: false,
+    playerScore: 0,
+    assertions: 0,
   }
 
   componentDidMount = async () => {
@@ -94,7 +96,7 @@ export class Game extends Component {
 
   handleClick = (event) => {
     const { questions, activeQuestion } = this.state;
-    const { isAnswersDisabled, timer } = this.props;
+    const { isAnswersDisabled, timer, addPlayerPoints } = this.props;
     const correctAnswer = questions[activeQuestion].correct_answer;
     const parent = event.target.parentNode;
     this.setState({ wasAnswered: true });
@@ -108,18 +110,27 @@ export class Game extends Component {
     });
     if (event.target.className === 'correct-answer') {
       const SCORE_BASE = 10;
+      const SCORE_HARD = 3;
+      const SCORE_MEDIUM = 2;
+      const SCORE_EASY = 1;
       const { difficulty } = questions[activeQuestion];
+      let difficultyPoints = 0;
       if (difficulty === 'hard') {
-        const difficultyPoints = 3;
+        difficultyPoints = SCORE_HARD;
       } if (difficulty === 'medium') {
-        const difficultyPoints = 2;
+        difficultyPoints = SCORE_MEDIUM;
       } if (difficulty === 'easy') {
-        const difficultyPoints = 1;
+        difficultyPoints = SCORE_EASY;
       }
-      const playerScore = SCORE_BASE + (timer * difficultyPoints);
+      const questionScore = SCORE_BASE + (timer * difficultyPoints);
+      const { playerScore, assertions } = this.state;
+      const newScore = playerScore + questionScore;
+      this.setState({ playerScore: newScore, assertions: assertions + 1 }, () => {
+        const obj = { score: newScore, assertions: assertions + 1 };
+        addPlayerPoints(obj);
+      });
     }
   }
-
 
     nextQuestion = () => {
       const { activeQuestion, wasAnswered } = this.state;
@@ -141,47 +152,46 @@ export class Game extends Component {
         history.push('/feedback');
       }
     };
-  }
 
-  // Ref: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array?page=1&tab=scoredesc#tab-top
-  shuffle(array) {
-    let currentIndex = array.length; let
-      randomIndex;
+    // Ref: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array?page=1&tab=scoredesc#tab-top
+    shuffle(array) {
+      let currentIndex = array.length; let
+        randomIndex;
 
-    // While there remain elements to shuffle...
-    while (currentIndex !== 0) {
+      // While there remain elements to shuffle...
+      while (currentIndex !== 0) {
       // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
 
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+
+      return array;
     }
 
-    return array;
-  }
+    render() {
+      const { isLoading, questions, activeQuestion, wasAnswered } = this.state;
+      const { timer } = this.props;
 
-  render() {
-    const { isLoading, questions, activeQuestion, wasAnswered } = this.state;
-    const { timer } = this.props;
-
-    const nextQuestion = (
-      <button
-        type="button"
-        data-testid="btn-next"
-        onClick={ this.nextQuestion }
-      >
-        Proxima pergunta
-      </button>
-    );
-    return (
-      <main>
-        {!isLoading && this.createQuestion(questions[activeQuestion])}
-        { timer === 0 || wasAnswered ? nextQuestion : <p>Responda a pergunta</p>}
-      </main>
-    );
-  }
+      const nextQuestion = (
+        <button
+          type="button"
+          data-testid="btn-next"
+          onClick={ this.nextQuestion }
+        >
+          Proxima pergunta
+        </button>
+      );
+      return (
+        <main>
+          {!isLoading && this.createQuestion(questions[activeQuestion])}
+          { timer === 0 || wasAnswered ? nextQuestion : <p>Responda a pergunta</p>}
+        </main>
+      );
+    }
 }
 
 Game.propTypes = {
@@ -206,6 +216,7 @@ const mapDispatchToProps = (dispatch) => ({
   dispatchToken: (token) => dispatch(addToken(token)),
   dispatchSeconds: (seconds) => dispatch(addTimer(seconds)),
   isAnswersDisabled: (isBtnDisabled) => dispatch(buttonDisabled(isBtnDisabled)),
+  addPlayerPoints: (points) => dispatch(addPlayerInfos(points)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
