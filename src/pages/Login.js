@@ -17,7 +17,7 @@ export class Login extends Component {
     const { addPlayerToGlobalState, addTokenToGlobalState, history } = this.props;
     const newToken = await this.getToken();
     const { name, gravatarEmail } = this.state;
-    const player = { name, gravatarEmail };
+    const player = { name, gravatarEmail, assertions: 0, score: 0 };
     addPlayerToGlobalState(player);
     addTokenToGlobalState(newToken);
 

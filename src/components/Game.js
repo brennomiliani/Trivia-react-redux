@@ -158,6 +158,7 @@ export class Game extends Component {
         setTokenOnStorage('ranking', obj);
         history.push('/feedback');
         isAnswersDisabled(false);
+        this.setState({ playerScore: 0, assertions: 0 });
       }
     };
 
