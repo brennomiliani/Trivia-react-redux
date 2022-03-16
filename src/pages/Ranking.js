@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { getPlayerFromStorage } from '../services/getSetLocalStorage';
 
 class Ranking extends Component {
@@ -10,13 +11,13 @@ class Ranking extends Component {
   componentDidMount = () => {
     const rankingLocal = getPlayerFromStorage();
     this.setState({ ranking: rankingLocal });
-    console.log(rankingLocal);
+    // console.log(rankingLocal);
   };
 
   render() {
     const { history } = this.props;
     const { ranking } = this.state;
-
+    console.log(ranking);
     const rankingOrder = ranking.sort((a, b) => {
       if (a.score > b.score) {
         const posicion = -1;
@@ -40,6 +41,7 @@ class Ranking extends Component {
         <div>
           { rankingOrder }
         </div>
+
         <button
           type="button"
           data-testid="btn-go-home"

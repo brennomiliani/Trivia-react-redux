@@ -149,7 +149,15 @@ export class Game extends Component {
         this.setState({ activeQuestion: activeQuestion + 1, wasAnswered: false });
       }
       if (activeQuestion === MAX_QUESTIONS) {
+        const { player } = this.props;
+        const obj = {
+          name: player.name,
+          score: player.score,
+          picture: player.gravatarEmail,
+        };
+        setTokenOnStorage('ranking', obj);
         history.push('/feedback');
+        isAnswersDisabled(false);
       }
     };
 
@@ -203,6 +211,11 @@ Game.propTypes = {
     push: PropTypes.func,
   }).isRequired,
   isAnswersDisabled: PropTypes.func.isRequired,
+  player: PropTypes.shape({
+    gravatarEmail: PropTypes.string,
+    name: PropTypes.string,
+    score: PropTypes.string,
+  }).isRequired,
   reduxToken: PropTypes.string.isRequired,
   timer: PropTypes.number.isRequired,
 };
@@ -211,6 +224,7 @@ const mapStateToProps = (state) => ({
   reduxToken: state.token,
   timer: state.timer.finalSeconds,
   answerIsDisabled: state.timer.answersAreDisabled,
+  player: state.player,
 });
 
 const mapDispatchToProps = (dispatch) => ({
