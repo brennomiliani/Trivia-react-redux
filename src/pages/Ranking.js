@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { getPlayerFromStorage } from '../services/getSetLocalStorage';
 
 class Ranking extends Component {
