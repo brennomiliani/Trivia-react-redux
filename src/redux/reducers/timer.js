@@ -16,7 +16,7 @@ const timer = (state = initialState, { type, payload }) => {
     return { ...state, seconds: payload };
 
   case ANSWER_DISABLED:
-    return { ...state, answersAreDisabled: payload };
+    return { ...state, finalSeconds: state.seconds, answersAreDisabled: payload };
 
   case SET_FINAL_TIMER:
     return { ...state, finalSeconds: payload };

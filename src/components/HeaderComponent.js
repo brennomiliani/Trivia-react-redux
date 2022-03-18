@@ -6,20 +6,28 @@ import playerImgRequest from '../services/apiGravatar';
 export class Header extends Component {
   render() {
     const { playerName, playerEmail, playerScore } = this.props;
-
+    console.log(playerName, playerEmail, playerScore);
     return (
-      <header>
+      <header className="d-flex align-items-center justify-content-center py-3 mb-4">
+        {/* <img
+          style={ { width: '150px' } }
+          className="img-fluid float-start"
+          src={ image }
+          alt='logo escrito "TRIVIA"'
+        /> */}
+        <p className="me-4 mb-0" data-testid="header-player-name">
+          { playerName }
+        </p>
         <img
+          className="me-2 rounded"
           data-testid="header-profile-picture"
           src={ playerImgRequest(playerEmail) }
           alt={ playerName }
         />
-        <p data-testid="header-player-name">
-          { playerName }
-        </p>
-        Pontos:
-        <p data-testid="header-score">
-          {playerScore}
+        <p className="ms-3 mb-0" data-testid="header-score">
+          Pontos:
+          { ' ' }
+          { playerScore }
         </p>
       </header>
     );
