@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { getPlayerFromStorage } from '../services/getSetLocalStorage';
+import playerImgRequest from '../services/apiGravatar';
 
 class Ranking extends Component {
   state = {
@@ -26,13 +27,16 @@ class Ranking extends Component {
         const posicionOne = 1;
         return posicionOne;
       } return 0;
-    }).map((player, index) => (
-      <div key={ index }>
-        <p data-testid={ `player-name-${index}` }>{ player.name }</p>
-        <p data_testid={ `player-score-${index}` }>{ player.score }</p>
-        <img src={ player.picture } alt={ player.name } />
-      </div>
-    ));
+    }).map((player, index) => {
+      const imgUrl = playerImgRequest(player.picture);
+      return (
+        <div key={ index }>
+          <p data-testid={ `player-name-${index}` }>{ player.name }</p>
+          <p data_testid={ `player-score-${index}` }>{ player.score }</p>
+          <img className="rounded" src={ imgUrl } alt={ player.name } />
+        </div>
+      );
+    });
 
     return (
       <div>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import image from '../trivia.png';
 import playerImgRequest from '../services/apiGravatar';
 
 export class Header extends Component {
@@ -16,7 +15,7 @@ export class Header extends Component {
           src={ image }
           alt='logo escrito "TRIVIA"'
         /> */}
-        <p className="me-2 mb-0" data-testid="header-player-name">
+        <p className="me-4 mb-0" data-testid="header-player-name">
           { playerName }
         </p>
         <img
@@ -25,7 +24,7 @@ export class Header extends Component {
           src={ playerImgRequest(playerEmail) }
           alt={ playerName }
         />
-        <p className="me-2 mb-0" data-testid="header-score">
+        <p className="ms-3 mb-0" data-testid="header-score">
           Pontos:
           { ' ' }
           { playerScore }

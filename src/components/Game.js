@@ -202,7 +202,7 @@ export class Game extends Component {
       );
 
       const awaitAnswerMessage = (
-        <p className="mt-3">Responda a pergunta</p>
+        <p className="mt-4">Escolha a sua resposta</p>
       );
 
       return (

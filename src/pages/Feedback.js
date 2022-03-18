@@ -11,35 +11,40 @@ class Feedback extends Component {
     return (
       <>
         <HeaderComponent />
-        <h3 data-testid="feedback-text">
-          { assertions >= assertionsNum
-            ? 'Well Done!'
-            : 'Could be better...'}
-        </h3>
-        Pontos:
-        <p data-testid="feedback-total-score">
-          { score }
-        </p>
-        Acertos:
-        <p data-testid="feedback-total-question">
-          { assertions }
-        </p>
+        <main className="d-flex flex-column align-items-center mx-auto mt-5">
 
-        <button
-          type="button"
-          data-testid="btn-play-again"
-          onClick={ () => history.push('/') }
-        >
-          Jogar Novamente
-        </button>
+          <h3 data-testid="feedback-text">
+            { assertions >= assertionsNum
+              ? 'Well Done!'
+              : 'Could be better...'}
+          </h3>
+          Pontos:
+          <p data-testid="feedback-total-score">
+            { score }
+          </p>
+          Acertos:
+          <p data-testid="feedback-total-question">
+            { assertions }
+          </p>
 
-        <button
-          type="button"
-          data-testid="btn-ranking"
-          onClick={ () => history.push('/ranking') }
-        >
-          Ranking
-        </button>
+          <button
+            className="btn btn-primary p-2 mb-2 w-25"
+            type="button"
+            data-testid="btn-play-again"
+            onClick={ () => history.push('/') }
+          >
+            Jogar Novamente
+          </button>
+
+          <button
+            className="btn btn-primary p-2 w-25"
+            type="button"
+            data-testid="btn-ranking"
+            onClick={ () => history.push('/ranking') }
+          >
+            Ranking
+          </button>
+        </main>
       </>
     );
   }
