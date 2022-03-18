@@ -8,18 +8,20 @@ export class Header extends Component {
     const { playerName, playerEmail, playerScore } = this.props;
     console.log(playerName, playerEmail, playerScore);
     return (
-      <header>
+      <header className="d-flex align-items-center justify-content-center py-3 mb-4">
         <img
+          className="me-2 rounded"
           data-testid="header-profile-picture"
           src={ playerImgRequest(playerEmail) }
           alt={ playerName }
         />
-        <p data-testid="header-player-name">
+        <p className="me-2 mb-0" data-testid="header-player-name">
           { playerName }
         </p>
-        Pontos:
-        <p data-testid="header-score">
-          {playerScore}
+        <p className="me-2 mb-0" data-testid="header-score">
+          Pontos:
+          { ' ' }
+          { playerScore }
         </p>
       </header>
     );

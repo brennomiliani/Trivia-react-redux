@@ -49,7 +49,7 @@ export class Game extends Component {
       return (
         <button
           disabled={ answerIsDisabled }
-          className="default-answer"
+          className="btn btn-primary me-2"
           onClick={ this.handleClick }
           type="button"
           key={ index }
@@ -65,7 +65,7 @@ export class Game extends Component {
     answerArr.push(
       <button
         disabled={ answerIsDisabled }
-        className=""
+        className="btn btn-primary me-2"
         onClick={ this.handleClick }
         type="button"
         key="correct"
@@ -103,12 +103,12 @@ export class Game extends Component {
     isAnswersDisabled(true);
     parent.childNodes.forEach((answer) => {
       if (answer.innerHTML === correctAnswer) {
-        answer.className = 'correct-answer';
+        answer.className = 'btn btn-success me-2';
       } else {
-        answer.className = 'incorrect-answer';
+        answer.className = 'btn btn-danger me-2';
       }
     });
-    if (event.target.className === 'correct-answer') {
+    if (event.target.className.includes('btn-success')) {
       const SCORE_BASE = 10;
       const SCORE_HARD = 3;
       const SCORE_MEDIUM = 2;
@@ -137,10 +137,10 @@ export class Game extends Component {
       const { history, isAnswersDisabled, dispatchSeconds } = this.props;
       const MAX_QUESTIONS = 4;
       if (wasAnswered) {
-        const correctButton = document.querySelector('.correct-answer');
-        const incorrectButtons = document.querySelectorAll('.incorrect-answer');
+        const correctButton = document.querySelector('.btn-success');
+        const incorrectButtons = document.querySelectorAll('.btn-danger');
         const answerButtons = [...incorrectButtons, correctButton];
-        answerButtons.forEach((answer) => { answer.className = 'default-answer'; });
+        answerButtons.forEach((answer) => { answer.className = 'btn btn-primary me-2'; });
       }
       if (activeQuestion < MAX_QUESTIONS) {
         const SECONDS_PER_QUESTION = 30;
@@ -187,6 +187,7 @@ export class Game extends Component {
 
       const nextQuestion = (
         <button
+          className="btn btn-primary mt-4"
           type="button"
           data-testid="btn-next"
           onClick={ this.nextQuestion }
