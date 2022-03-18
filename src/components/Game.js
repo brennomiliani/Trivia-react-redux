@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import sanitizeHtml from 'sanitize-html';
 import { setTokenOnStorage } from '../services/getSetLocalStorage';
 import { triviaQuestionsRequest, triviaTokenRequest } from '../services/apiTrivia';
 import { addToken, buttonDisabled, addTimer, addPlayerInfos } from '../redux/actions';
@@ -54,9 +55,9 @@ export class Game extends Component {
           type="button"
           key={ index }
           data-testid={ dataTestId }
+          dangerouslySetInnerHTML={ { __html: sanitizeHtml(answer) } }
         >
-          {answer}
-
+          {}
         </button>
       );
     });
@@ -70,8 +71,9 @@ export class Game extends Component {
         type="button"
         key="correct"
         data-testid="correct-answer"
+        dangerouslySetInnerHTML={ { __html: sanitizeHtml(correct) } }
       >
-        {correct}
+        {/* {correct} */}
       </button>,
     );
 
@@ -86,7 +88,10 @@ export class Game extends Component {
     return (
       <div className="d-flex flex-column align-items-center">
         <p data-testid="question-category">{question.category}</p>
-        <p data-testid="question-text">{question.question}</p>
+        <p
+          data-testid="question-text"
+          dangerouslySetInnerHTML={ { __html: sanitizeHtml(question.question) } }
+        />
         <div data-testid="answer-options">
           {answers}
         </div>
