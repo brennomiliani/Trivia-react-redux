@@ -34,8 +34,14 @@ export class Timer extends Component {
   render() {
     const { seconds } = this.state;
     return (
-      <p>
-        {seconds}
+      <p className="text-center">
+        Você tem
+        { ' ' }
+        <span className="text-warning">
+          {seconds}
+        </span>
+        { ' ' }
+        segundos para responder
       </p>
     );
   }

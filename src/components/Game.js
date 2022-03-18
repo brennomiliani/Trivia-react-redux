@@ -84,7 +84,7 @@ export class Game extends Component {
   createQuestion = (question) => {
     const answers = this.randomizeAnswers(question);
     return (
-      <div className="">
+      <div className="d-flex flex-column align-items-center">
         <p data-testid="question-category">{question.category}</p>
         <p data-testid="question-text">{question.question}</p>
         <div data-testid="answer-options">
@@ -195,10 +195,15 @@ export class Game extends Component {
           Proxima pergunta
         </button>
       );
+
+      const awaitAnswerMessage = (
+        <p className="mt-3">Responda a pergunta</p>
+      );
+
       return (
-        <main>
+        <main className="d-flex flex-column align-items-center mt-5">
           {!isLoading && this.createQuestion(questions[activeQuestion])}
-          { timer === 0 || wasAnswered ? nextQuestion : <p>Responda a pergunta</p>}
+          { timer === 0 || wasAnswered ? nextQuestion : awaitAnswerMessage}
         </main>
       );
     }
